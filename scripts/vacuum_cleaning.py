@@ -15,24 +15,26 @@ y3=11
 x4=11
 y4=11
 reach_x2 = False
-turned_90_once = False
+turned_90_on_left_once = False
 moved_lil_straight= False
-turned_90_twice = False
+turned_90_on_left_twice = False
 reached_x1 = False
+turned_90_on_right_once =False
+moved_lil_straight_again =False
 
 def callback(msg):
     global pose, reached_x1
     pose=msg
-    rospy.loginfo(f'x = {pose.x}')
 def vacuum_cleaning():
     global pose, twist, get_time, x1,y1,x2,y2,x3,y3,x4,y4
     rospy.init_node('turtle_roomba', anonymous=True)
     pub = rospy.Publisher('/turtle2/cmd_vel', Twist, queue_size=10)
     rospy.Subscriber('/turtle2/pose', Pose, callback)
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(20)
     
     def move_horizontal():
-        global reach_x2, turned_90_once, moved_lil_straight, turned_90_twice, reached_x1
+        global reach_x2, turned_90_on_left_once, moved_lil_straight, turned_90_on_left_twice
+        global reached_x1, moved_lil_straight_again
         if pose.x <x2:
             if reach_x2 == False:
                 print('move right')
@@ -44,34 +46,50 @@ def vacuum_cleaning():
             reach_x2=True
             twist.linear.x=0
             pub.publish(twist)
-            if reach_x2 == True and turned_90_once == False:
+            if reach_x2 == True and turned_90_on_left_once == False:
                 print('stopped to turn')
                 twist.linear.x= 0
                 twist.angular.z=1.5
                 pub.publish(twist)
-                turned_90_once = True
+                turned_90_on_left_once = True
                 rospy.sleep(0.5)
-            elif reach_x2 and turned_90_once and not moved_lil_straight:
+            elif turned_90_on_left_once and not moved_lil_straight:
                 print('to move a lil straight')
                 twist.angular.z=0
                 twist.linear.x=2
                 pub.publish(twist)
                 rospy.sleep(0.5)
                 moved_lil_straight = True
-            elif reach_x2 and turned_90_once and moved_lil_straight and turned_90_twice == False:
+            elif moved_lil_straight and turned_90_on_left_twice== False:
                 print("turning 90 again")
                 twist.linear.x= 0
                 twist.angular.z=4.7
                 pub.publish(twist)
-                turned_90_twice = True
+                turned_90_on_left_twice = True
                 rospy.sleep(0.5)
 
-            elif reach_x2 and turned_90_once and moved_lil_straight and turned_90_twice and not reached_x1:
-                while pose.x >x1:
+            elif turned_90_on_left_twice and not reached_x1:
+                while pose.x >x1 + 1: # just to make sure that it actually stops at the left end
                     twist.angular.z=0
                     print('lets move back')
                     twist.linear.x = 2
                     pub.publish(twist)
+                    rospy.sleep(0.5)
+                reached_x1 = True
+                twist.linear.x = 0
+                pub.publish(twist)
+            elif reached_x1 and not turned_90_on_right_once:
+                print('turn on right')
+                twist.linear.x= 0
+                twist.angular.z=1.5
+                pub.publish(twist)
+                turned_90_on_right_once = True
+                rospy.sleep(0.5)
+             
+
+
+
+
 
     while not rospy.is_shutdown():
         move_horizontal()
