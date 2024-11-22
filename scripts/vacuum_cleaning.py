@@ -35,57 +35,62 @@ def vacuum_cleaning():
     def move_horizontal():
         global reach_x2, turned_90_on_left_once, moved_lil_straight, turned_90_on_left_twice
         global reached_x1, moved_lil_straight_again
-        if pose.x <x2:
-            if reach_x2 == False:
-                print('move right')
-                twist.linear.x=2
-                twist.angular.z=0
+        if pose.x < x2:
+            if not reach_x2:
+                print('Moving right')
+                twist.linear.x = 2
+                twist.angular.z = 0
                 pub.publish(twist)
-                rospy.sleep(0.5)
         else:
-            reach_x2=True
-            twist.linear.x=0
+            reach_x2 = True
+            twist.linear.x = 0
             pub.publish(twist)
-            if reach_x2 == True and turned_90_on_left_once == False:
-                print('stopped to turn')
-                twist.linear.x= 0
-                twist.angular.z=1.5
+            rospy.sleep(0.2)  # Short sleep for smoother transitions
+            
+            if reach_x2 and not turned_90_on_left_once:
+                print('Stopping to turn left')
+                twist.angular.z = 1.5
                 pub.publish(twist)
+                rospy.sleep(1.0)
                 turned_90_on_left_once = True
-                rospy.sleep(0.5)
+
             elif turned_90_on_left_once and not moved_lil_straight:
-                print('to move a lil straight')
-                twist.angular.z=0
-                twist.linear.x=2
+                print('Moving a little straight')
+                twist.angular.z = 0
+                twist.linear.x = 1  # Reduced speed for better control
                 pub.publish(twist)
                 rospy.sleep(0.5)
                 moved_lil_straight = True
-            elif moved_lil_straight and turned_90_on_left_twice== False:
-                print("turning 90 again")
-                twist.linear.x= 0
-                twist.angular.z=4.7
+
+            elif moved_lil_straight and not turned_90_on_left_twice:
+                print('Turning left again')
+                twist.linear.x = 0
+                twist.angular.z = 4.7
                 pub.publish(twist)
-                turned_90_on_left_twice = True
                 rospy.sleep(0.5)
+                turned_90_on_left_twice = True
 
             elif turned_90_on_left_twice and not reached_x1:
-                while pose.x >x1 + 1: # just to make sure that it actually stops at the left end
-                    twist.angular.z=0
-                    print('lets move back')
-                    twist.linear.x = 2
+                if pose.x > x1 + 0.5:  # Adjust threshold for smoother stopping
+                    print('Moving back to the left')
+                    twist.angular.z = 0
+                    twist.linear.x = 1  # Slow down near the boundary
                     pub.publish(twist)
-                    rospy.sleep(0.5)
-                reached_x1 = True
-                twist.linear.x = 0
-                pub.publish(twist)
+                else:
+                    print('Reached left boundary')
+                    twist.linear.x = 0
+                    pub.publish(twist)
+                    reached_x1 = True
+                    rospy.sleep(0.2)  # Short delay for state transition
+
             elif reached_x1 and not turned_90_on_right_once:
-                print('turn on right')
-                twist.linear.x= 0
-                twist.angular.z=1.5
+                print('Turning right')
+                twist.linear.x = 0
+                twist.angular.z = -1.5  # Right turn
                 pub.publish(twist)
+                rospy.sleep(1.0)
                 turned_90_on_right_once = True
-                rospy.sleep(0.5)
-             
+
 
 
 
