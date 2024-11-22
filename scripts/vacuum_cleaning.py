@@ -21,9 +21,9 @@ turned_90_twice = False
 reached_x1 = False
 
 def callback(msg):
-    global pose
+    global pose, reached_x1
     pose=msg
-
+    rospy.loginfo(f'x = {pose.x}')
 def vacuum_cleaning():
     global pose, twist, get_time, x1,y1,x2,y2,x3,y3,x4,y4
     rospy.init_node('turtle_roomba', anonymous=True)
@@ -66,24 +66,12 @@ def vacuum_cleaning():
                 turned_90_twice = True
                 rospy.sleep(0.5)
 
-            elif moved_lil_straight and turned_90_twice and not reached_x1:
-                if pose.x >x1:
+            elif reach_x2 and turned_90_once and moved_lil_straight and turned_90_twice and not reached_x1:
+                while pose.x >x1:
                     twist.angular.z=0
                     print('lets move back')
                     twist.linear.x = 2
-                else:
-                    print('reached x1')
-                    twist.linear.x= 0
-                    reached_x1 = True
-                pub.publish(twist)
-
-
-            
-                
-
-                
-        
-
+                    pub.publish(twist)
 
     while not rospy.is_shutdown():
         move_horizontal()
