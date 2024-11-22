@@ -1,13 +1,13 @@
 # PDE4430 MOBILE ROBOTICS – COURSEWORK 1 - ROS TURTLESIM 🐢
-
-This repository hosts the source code for the `turtlesim_coursework` package, which implements five main tasks with the turtle in a ROS Noetic Turtlesim environment:
-
+This assignment focusses on 5 tasks:
 - **Teleoperation using the keyboard** with an option to change movement speed.
 - **Autonomous navigation** to any given coordinate in the Turtlesim window.
 - **Wall collision avoidance**: Overrides movement to prevent wall collisions.
 - **Vacuum cleaning behavior**: Covers the entire window area efficiently.
 - **Multiple turtles vacuum cleaning behavior**.
-## Prerequisites:
+
+This repository hosts the coursework as a package folder called `final_coursework`, which implements three of the 5 tasks with the turtle in a ROS Noetic Turtlesim environment:
+
 1. ROS installed and configured.
 2. Python 3 with `rospy`, `geometry_msgs`,`math`, and `pynput` libraries installed.
 3. Start the ROS master (run `roscore`).
@@ -227,6 +227,8 @@ The `RQT` graph is shown below.
 
 ## Video Demonstration
 
-![click here to watch video](video.mp4)
+!['Click here to download video'](video.mp4)
 
+## Task Summary
 
+I completed 3 out of the 5 tasks given. While I made progress on Task 4, I encountered significant challenges in troubleshooting and refining the code, which I will continue to work on.
