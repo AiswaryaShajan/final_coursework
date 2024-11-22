@@ -19,15 +19,50 @@ def callback(msg):
 def vacuum_cleaning():
     global pose, twist, get_time, x1,y1,x2,y2,x3,y3,x4,y4
     rospy.init_node('turtle_roomba', anonymous=True)
-    pub = rospy.Publisher('/turtle1/cmd_vel', Twist, queue_size=10)
-    rospy.Subscriber('/turtle1/pose', Pose, callback)
+    pub = rospy.Publisher('/turtle2/cmd_vel', Twist, queue_size=10)
+    rospy.Subscriber('/turtle2/pose', Pose, callback)
     rate = rospy.Rate(10)
     time = (x2-x1)/2
     
-    while not rospy.is_shutdown() and pose.x < x2:
-        twist.linear.x=2
-        pub.publish(twist)        
+    def move_horizontal():
+        if pose.x < x2:
+            print('move right')
+            twist.linear.x=2
+            twist.angular.z=0
+            pub.publish(twist)
+            rospy.sleep(0.5)
+        else:
+            print('turning now')
+            twist.linear.x= 0
+            twist.angular.z=1.5
+            pub.publish(twist)
+            rospy.sleep(0.5)
+            print('going straight for a while')
+            twist.linear.x= 2
+            twist.angular.z=0
+            pub.publish(twist)
+            rospy.sleep(0.5)
+            print('turning again')
+            twist.linear.x= 0
+            twist.angular.z=1.5
+            pub.publish(twist)
+            rospy.sleep(0.5)
+            if pose.x >= x1:
+                print('move left')
+                twist.linear.x= 2
+                twist.angular.z=0
+                
+            else:
+                print('reached and turning back')
+                twist.linear.x=0
+                twist.angular.z = 3
+            pub.publish(twist)
+
+
+    while not rospy.is_shutdown():
+        move_horizontal()
         rate.sleep()
+
         
 
 if __name__=='__main__':
