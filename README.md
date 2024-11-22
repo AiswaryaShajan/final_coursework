@@ -225,4 +225,8 @@ The `RQT` graph is shown below.
    rosrun turtlesim_coursework wall_avoidance.py
 2. Follow the on-screen instructions in the terminal to move the turtle.
 
+## Video Demonstration
+
+![click here to watch video](video.mp4)
+
 
