@@ -1,0 +1,17 @@
+<launch>
+    <!-- Launch roscore -->
+    <group>
+        <node name="roscore" pkg="roslaunch" type="roslaunch" args="start /opt/ros/noetic/roscore.launch" />
+    </group>
+
+    <!-- Start turtlesim node -->
+    <group>
+        <node name="turtlesim_node" pkg="turtlesim" type="turtlesim_node" output="screen"/>
+    </group>
+
+    <!-- Start teleop_with_speed.py node -->
+    <group>
+        <node name="navigation_node" pkg="final_coursework" type="navigate_to_coordinate.py" output="screen"/>
+    </group>
+</launch>
+ 
